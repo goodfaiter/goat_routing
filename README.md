@@ -21,16 +21,17 @@ Build and run using Docker Compose:
 
 ```bash
 # Build the Docker image
-docker-compose build
+docker compose build
+# (or use 'docker-compose build' for older Docker versions)
 
 # Run the container
-docker-compose up -d
+docker compose up -d
 
 # Enter the container
-docker-compose exec goat_routing /bin/bash
+docker compose exec goat_routing /bin/bash
 
 # Stop the container
-docker-compose down
+docker compose down
 ```
 
 Or using Docker directly:

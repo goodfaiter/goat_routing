@@ -6,7 +6,8 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    PYTHONPATH=/app/src
 
 # Set working directory
 WORKDIR /app
@@ -20,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     git \
     curl \
+    ca-certificates \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -27,19 +29,22 @@ RUN apt-get update && apt-get install -y \
 RUN ln -sf /usr/bin/python3.10 /usr/bin/python && \
     ln -sf /usr/bin/pip3 /usr/bin/pip
 
+# Update CA certificates
+RUN update-ca-certificates
+
 # Upgrade pip and install build tools
-RUN pip install --upgrade pip setuptools wheel
+RUN python -m pip install --upgrade pip setuptools wheel || \
+    python -m pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --upgrade pip setuptools wheel
 
 # Copy project files
 COPY pyproject.toml /app/
 COPY README.md /app/
 COPY src/ /app/src/
-
-# Install the package in editable mode with dev dependencies
-RUN pip install -e ".[dev]"
-
-# Copy tests
 COPY tests/ /app/tests/
 
+# Install development dependencies only (not the package itself since it's mounted)
+RUN python -m pip install pytest pytest-cov black flake8 mypy || \
+    python -m pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org pytest pytest-cov black flake8 mypy
+
 # Default command
-CMD ["python", "-c", "import goat_routing; print(f'goat_routing v{goat_routing.__version__} installed successfully')"]
+CMD ["python", "-c", "import sys; sys.path.insert(0, '/app/src'); import goat_routing; print(f'goat_routing v{goat_routing.__version__} ready for development')"]
