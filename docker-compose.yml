@@ -1,0 +1,24 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: ${LOCAL_USER_ID:-1000}
+        GROUP_ID: ${LOCAL_GROUP_ID:-1000}
+    privileged: true
+    stdin_open: true
+    tty: true
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - LOCAL_USER_ID=${LOCAL_USER_ID:-1000}
+      - XAUTHORITY=/tmp/.docker.xauth
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - ${XAUTHORITY}:/tmp/.docker.xauth:ro
+      - ./:/workspace
+    devices:
+      - /dev/dri:/dev/dri
+    command: tail -f /dev/null
