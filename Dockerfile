@@ -34,7 +34,7 @@ RUN update-ca-certificates
 
 # Upgrade pip and install build tools
 RUN python -m pip install --upgrade pip setuptools wheel || \
-    python -m pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org --upgrade pip setuptools wheel
+    python -m pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org --upgrade pip setuptools wheel
 
 # Copy project files
 COPY pyproject.toml /app/
@@ -44,7 +44,7 @@ COPY tests/ /app/tests/
 
 # Install development dependencies only (not the package itself since it's mounted)
 RUN python -m pip install pytest pytest-cov black flake8 mypy || \
-    python -m pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org pytest pytest-cov black flake8 mypy
+    python -m pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pytest pytest-cov black flake8 mypy
 
 # Default command
 CMD ["python", "-c", "import sys; sys.path.insert(0, '/app/src'); import goat_routing; print(f'goat_routing v{goat_routing.__version__} ready for development')"]
