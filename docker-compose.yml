@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  goat_routing:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: goat_routing:latest
+    container_name: goat_routing_dev
+    volumes:
+      # Mount source code for development
+      - ./src:/app/src
+      - ./tests:/app/tests
+      - ./pyproject.toml:/app/pyproject.toml
+    environment:
+      - PYTHONPATH=/app/src
+    stdin_open: true
+    tty: true
+    command: /bin/bash
