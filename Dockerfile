@@ -15,6 +15,9 @@ RUN groupadd --gid $USER_GID $USERNAME \
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y python3-pip git nano mesa-utils
 
+# Install python dependencies
+RUN pip install --upgrade pip uv
+
 # Add entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
